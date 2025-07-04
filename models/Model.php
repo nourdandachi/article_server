@@ -20,6 +20,21 @@ abstract class Model{
         return $data ? new static($data) : null;
     }
 
+    public static function all(mysqli $mysqli){
+        $sql= sprintf("SELECT * FROM %s", static::$table);
+
+        $query = $mysqli->prepare($sql);
+        $query->execute();
+
+        $data = $query->get_result();
+
+        $objects = [];
+        while($row = $data->fetch_assoc()){
+            $objects[]= new static($row);
+        }
+
+        return $objects;
+    }
 
     public static function where(mysqli $mysqli, $column, $data){
         $sql= sprintf("SELECT * FROM %s WHERE %s = ?",
@@ -40,17 +55,6 @@ abstract class Model{
 
         $query = $mysqli->prepare($sql);
         $query->bind_param($type, $data);
-        $query->execute();
-
-        $result = $query->get_result()->fetch_assoc();
-
-        return $result ? new static($result) : null;
-    }
-
-    public static function all(mysqli $mysqli){
-        $sql= sprintf("SELECT * FROM %s", static::$table);
-
-        $query = $mysqli->prepare($sql);
         $query->execute();
 
         $data = $query->get_result();

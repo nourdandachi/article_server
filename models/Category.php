@@ -28,5 +28,25 @@ class Category extends Model{
     public function toArray(){
         return [$this->id, $this->name];
     }
+
+    public static function getCategoryByArticleId(mysqli $mysqli, $id){
+        $sql = "
+            SELECT categories.name AS category_name
+            FROM articles
+            JOIN categories ON articles.category_id = categories.id
+            WHERE articles.id = ?;
+        ";
+
+        $query = $mysqli->prepare($sql);
+        $query->bind_param("i", $id);
+
+        $query->execute();
+        $result = $query->get_result();
+
+        if ($result->num_rows === 0) return null;
+
+        $category= $result->fetch_assoc();
+        return $category;
+    }
     
 }
