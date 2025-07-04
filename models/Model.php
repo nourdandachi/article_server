@@ -102,6 +102,14 @@ abstract class Model{
         $query->execute();
     }
 
+    public static function deleteAll($mysqli){
+        $sql = sprintf("DELETE FROM %s;", static::$table);
+
+        $query = $mysqli->prepare($sql);
+
+        return $query->execute();
+    }
+
     public function update(mysqli $mysqli, array $data){
 
         $columns = array_keys($data);
